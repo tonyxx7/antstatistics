@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="build" name="de.pellepelster.ant.statistics">
+
+	<property file="build.properties" />
+
+	<!-- task and type defs -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="lib/ant-contrib/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<path id="de.pellepelster.ant.statistics.classpath">
+		<fileset dir="lib/ant/lib/" includes="*.jar" />
+		<fileset dir="lib/jfreechart/" includes="*.jar" />
+		<fileset dir="lib/xstream/" includes="*.jar" />
+		<fileset dir="lib/commons/" includes="*.jar" />
+	</path>
+
+	<target name="init" depends="clean">
+		<mkdir dir="${build.location}" />
+		<mkdir dir="${dist.location}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${dist.location}" />
+		<delete dir="${build.location}" />
+	</target>
+
+	<target name="build" depends="init, javac, jar, zip" />
+
+	<target name="javac">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${build.location}" source="${source}" target="${target}">
+			<src path="src" />
+			<classpath refid="de.pellepelster.ant.statistics.classpath" />
+		</javac>
+	</target>
+
+	<target name="jar">
+		<jar destfile="${dist.location}/${ant.project.name}-${version}.jar" basedir="${build.location}" includes="**" />
+		<jar destfile="${dist.location}/${ant.project.name}-${version}-source.jar" basedir="src/" manifest="src/META-INF/MANIFEST.MF" />
+	</target>
+
+	<target name="zip">
+		
+		<property name="zip.temp" value="${java.io.tmpdir}/${ant.project.name}_zip" />
+		<delete dir="${zip.temp}" failonerror="false" />
+		<mkdir dir="${zip.temp}"/>
+		
+		<copy todir="${zip.temp}" flatten="true">
+			<fileset dir="${basedir}/${dist.location}" includes="*.jar" excludes="*-source*" />
+			<fileset dir="${basedir}/lib/jfreechart/" includes="*.jar" />
+			<fileset dir="${basedir}/lib/xstream/" includes="*.jar" />
+			<fileset dir="${basedir}/lib/commons/" includes="*.jar" />
+		</copy>
+		<zip basedir="${zip.temp}" destfile="${basedir}/${dist.location}/${ant.project.name}-${version}.zip" />	
+		
+		<delete dir="${zip.temp}" />
+	</target>
+
+	<target name="test" depends="build">
+		<test.execute antOpts="" />
+	</target>
+
+	<target name="test.debug" depends="build">
+		<test.execute antOpts="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
+	</target>
+
+
+	<macrodef name="test.execute">
+		<attribute name="antOpts" />
+		<sequential>
+			<if>
+				<os family="unix" />
+				<then>
+					<exec executable="${basedir}/lib/ant/bin/ant" newenvironment="true">
+						<env key="CLASSPATH" path="${basedir}/lib/ant/lib/" />
+						<env key="ANT_OPTS" value="@{antOpts}" />
+						<arg line="-lib ${basedir}/dist/" />
+						<arg line="-lib ${basedir}/lib/jfreechart/" />
+						<arg line="-lib ${basedir}/lib/xstream/" />
+						<arg line="-lib ${basedir}/lib/commons/" />
+						<arg line="-logger de.pellepelster.ant.statistics.AntStatisticsLogger" />
+						<arg line="-f ${basedir}/test/build1.xml" />
+					</exec>
+				</then>
+			</if>
+
+			<if>
+				<os family="windows" />
+				<then>
+					<exec executable="cmd">
+						<env key="CLASSPATH" path="${basedir}/lib/ant/lib/" />
+						<env key="ANT_OPTS" value="@{antOpts}" />
+						<arg value="/c" />
+						<arg value="${basedir}/lib/ant/bin/ant.bat" />
+						<arg line="-lib ${basedir}/dist/" />
+						<arg line="-lib ${basedir}/lib/jfreechart/" />
+						<arg line="-lib ${basedir}/lib/xstream/" />
+						<arg line="-lib ${basedir}/lib/commons/" />
+						<arg line="-logger de.pellepelster.ant.statistics.AntStatisticsLogger" />
+						<arg line="-f ${basedir}/test/build1.xml" />
+					</exec>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+</project>

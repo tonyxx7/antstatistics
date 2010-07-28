@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="target3" name="build3">
+
+	<target name="target3">
+
+        <random min="1" max="4" property="target3RandomValue"></random>
+        <echo>Random:${target3RandomValue}</echo>
+		<sleep seconds="${target3RandomValue}" />
+		
+		<ant antfile="build4.xml" target="target4"/>
+			
+	</target>
+
+</project>
