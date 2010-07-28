@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="target4" name="build4">
+
+	<target name="target4">
+		
+        <random min="1" max="4" property="target4RandomValue"></random>
+        <echo>Random:${target4RandomValue}</echo>
+		<sleep seconds="${target4RandomValue}" />
+		
+	</target>
+
+</project>
