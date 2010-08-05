@@ -3,6 +3,7 @@
 
 	<property file="build.properties" />
 
+	<property name="antstatistics.target.threshold" value="123" />
 	<!-- task and type defs -->
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
