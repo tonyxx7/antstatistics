@@ -3,17 +3,17 @@
 <project basedir="." default="target1" name="build1">
 
 	<import file="build2.xml"/>
-	
-	<taskdef name="random" classname="de.pellepelster.ant.statistics.RandomTask" />
-	
+
+	<taskdef name="random" classname="de.pellepelster.ant.statistics.RandomTask"/>
+
 	<target name="target1" depends="target2">
-		
-        <random min="1" max="4" property="target1RandomValue"></random>
-        <echo>Random:${target1RandomValue}</echo>
-		<sleep seconds="${target1RandomValue}" />
-		
+
+		<random min="1" max="4" property="target1RandomValue"/>
+		<echo>Random:${target1RandomValue}</echo>
+		<sleep seconds="${target1RandomValue}"/>
+
 		<ant antfile="build3.xml" target="target3"/>
-		<antcall target="target2" />		
+		<antcall target="target2"/>
 	</target>
 
 </project>

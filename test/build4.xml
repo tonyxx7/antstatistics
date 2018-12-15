@@ -3,11 +3,11 @@
 <project basedir="." default="target4" name="build4">
 
 	<target name="target4">
-		
-        <random min="1" max="4" property="target4RandomValue"></random>
-        <echo>Random:${target4RandomValue}</echo>
-		<sleep seconds="${target4RandomValue}" />
-		
+
+		<random min="1" max="4" property="target4RandomValue"/>
+		<echo>Random:${target4RandomValue}</echo>
+		<sleep seconds="${target4RandomValue}"/>
+
 	</target>
 
 </project>
