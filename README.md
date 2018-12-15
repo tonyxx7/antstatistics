@@ -53,3 +53,9 @@ ant -lib ~/ant/antstatistics -logger de.pellepelster.ant.statistics.AntStatistic
 BUILD SUCCESSFUL
 Total time: 17 seconds
 ```
+
+## Related Projects ##
+
+- [Antomology](https://github.com/codehaus/antomology)
+- [Antro](https://github.com/jkff/antro)
+- [AntUtility](https://github.com/greensopinion/antutility)

@@ -153,12 +153,12 @@ public class AsciiTable {
         if (pads <= 0) {
             return str;
         }
-        str = leftPad(str, strLen + pads / 2, padChar);
-        str = rightPad(str, size, padChar);
+        str = pad(str, strLen + pads / 2, padChar, false);
+        str = pad(str, size, padChar, true);
         return str;
     }
 
-    private String leftPad(final String str, final int size, final char padChar) {
+    private String pad(final String str, final int size, final char padChar, final boolean b) {
         if (str == null) {
             return null;
         }
@@ -166,17 +166,8 @@ public class AsciiTable {
         if (pads <= 0) {
             return str;
         }
-        return repeat(String.valueOf(padChar), pads).concat(str);
+        return b ? str.concat(repeat(String.valueOf(padChar), pads))
+                : repeat(String.valueOf(padChar), pads).concat(str);
     }
 
-    private String rightPad(final String str, final int size, final char padChar) {
-        if (str == null) {
-            return null;
-        }
-        final int pads = size - str.length();
-        if (pads <= 0) {
-            return str;
-        }
-        return str.concat(repeat(String.valueOf(padChar), pads));
-    }
 }

@@ -80,7 +80,6 @@ public class AntStatisticsLogger extends DefaultLogger {
         /** {@inheritDoc} */
         @Override
         public int compare(ProjectPerformance project1, ProjectPerformance project2) {
-
             if (project1 == null || project2 == null || project1.getStartDate() == null
                     || project2.getStartDate() == null) {
                 return 0;
@@ -95,7 +94,6 @@ public class AntStatisticsLogger extends DefaultLogger {
         /** {@inheritDoc} */
         @Override
         public int compare(TargetPerformance target1, TargetPerformance target2) {
-
             if (target1 == null || target2 == null || target1.getDuration() == null
                     || target2.getDuration() == null) {
                 return 0;
@@ -251,7 +249,6 @@ public class AntStatisticsLogger extends DefaultLogger {
     }
 
     private TargetPerformance getAndCreateTarget(BuildEvent buildEvent) {
-
         ProjectPerformance project = getAndCreateProject(buildEvent);
         TargetPerformance target = getTarget(project, buildEvent);
 
@@ -515,4 +512,5 @@ public class AntStatisticsLogger extends DefaultLogger {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
 }
