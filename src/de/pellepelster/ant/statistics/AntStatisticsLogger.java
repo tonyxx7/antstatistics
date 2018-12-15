@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.XStream;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -415,7 +415,7 @@ public class AntStatisticsLogger extends DefaultLogger {
                 String.format("%s.png", rootProject.getProjectName()));
 
         try {
-            ChartUtilities.saveChartAsPNG(imageFile, chart, chartImageWidth, chartImageHeight);
+            ChartUtils.saveChartAsPNG(imageFile, chart, chartImageWidth, chartImageHeight);
         } catch (Exception e) {
             log(String.format("could not save image '%s' (%s)", imageFile.toURI().toString(),
                     e.getMessage()));

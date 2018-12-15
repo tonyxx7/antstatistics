@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 public class AsciiTable {
 
     private final String[] headers;
@@ -100,7 +98,7 @@ public class AsciiTable {
 
     private void createCenteredLine(int totalTableWidth, String text, StringBuffer result) {
         result.append(HORIZONTAL_TABLE_BORDER);
-        result.append(StringUtils.center(text, totalTableWidth));
+        result.append(center(text, totalTableWidth));
         result.append(HORIZONTAL_TABLE_BORDER);
         result.append(NEWLINE);
     }
@@ -110,9 +108,9 @@ public class AsciiTable {
         for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
             String cellText = row[columnIndex];
 
-            result.append(StringUtils.repeat(" ", HORIZONTAL_CELLPADDING));
-            result.append(StringUtils.center(cellText, maxColumnWidths.get(columnIndex)));
-            result.append(StringUtils.repeat(" ", HORIZONTAL_CELLPADDING));
+            result.append(repeat(" ", HORIZONTAL_CELLPADDING));
+            result.append(center(cellText, maxColumnWidths.get(columnIndex)));
+            result.append(repeat(" ", HORIZONTAL_CELLPADDING));
 
             if (columnIndex < headers.length - 1) {
                 result.append(HORIZONTAL_TABLE_BORDER);
@@ -125,7 +123,7 @@ public class AsciiTable {
 
     private void createHorizontalLine(int totalTableWidth, StringBuffer result) {
         result.append(TABLE_CONNECTOR);
-        result.append(StringUtils.repeat(VERTICAL_TABLE_BORDER, totalTableWidth));
+        result.append(repeat(VERTICAL_TABLE_BORDER, totalTableWidth));
         result.append(TABLE_CONNECTOR);
         result.append(NEWLINE);
     }
@@ -136,5 +134,49 @@ public class AsciiTable {
 
     public String getFooter() {
         return footer;
+    }
+
+    private String repeat(String s, int n) {
+        return String.format("%0" + n + "d", 0).replace("0", s);
+    }
+
+    private String center(final String str, final int size) {
+        return center(str, size, ' ');
+    }
+
+    private String center(String str, final int size, final char padChar) {
+        if (str == null || size <= 0) {
+            return str;
+        }
+        final int strLen = str.length();
+        final int pads = size - strLen;
+        if (pads <= 0) {
+            return str;
+        }
+        str = leftPad(str, strLen + pads / 2, padChar);
+        str = rightPad(str, size, padChar);
+        return str;
+    }
+
+    private String leftPad(final String str, final int size, final char padChar) {
+        if (str == null) {
+            return null;
+        }
+        final int pads = size - str.length();
+        if (pads <= 0) {
+            return str;
+        }
+        return repeat(String.valueOf(padChar), pads).concat(str);
+    }
+
+    private String rightPad(final String str, final int size, final char padChar) {
+        if (str == null) {
+            return null;
+        }
+        final int pads = size - str.length();
+        if (pads <= 0) {
+            return str;
+        }
+        return str.concat(repeat(String.valueOf(padChar), pads));
     }
 }
