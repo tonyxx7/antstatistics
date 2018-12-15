@@ -10,6 +10,7 @@ AntStatistics can be configured via Ant properties
 | `antstatistics.history.expire` | Number of builds to keep in history | 5           |
 | `antstatistics.chart.height` | Chart image height | 800         |
 | `antstatistics.chart.width` | Chart image width | 600         |
+| `antstatistics.chart.vector.graphics` | Chart image in vector format (SVG) | true         |
 | `antstatistics.target.threshold` | Threshold for the chart, targets with execution times lower than this will not be included | 200         |
 | `antstatistics.directory` | Directory for AntStatistics to keep its data | _antstatistics_ |
 
@@ -25,7 +26,7 @@ ant -lib ~/ant/antstatistics -logger de.pellepelster.ant.statistics.AntStatistic
 ```
 
 ## Example Chart ##
-![img/build1.png](img/build1.png)
+![img/build1.svg](img/build1.svg)
 
 ## Example Build Output ##
 ```

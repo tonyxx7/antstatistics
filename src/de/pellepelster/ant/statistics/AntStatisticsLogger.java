@@ -1,9 +1,15 @@
 package de.pellepelster.ant.statistics;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +24,8 @@ import java.util.Map;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
 import org.jfree.chart.ChartFactory;
@@ -28,6 +36,9 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class AntStatisticsLogger extends DefaultLogger {
 
@@ -46,11 +57,15 @@ public class AntStatisticsLogger extends DefaultLogger {
 
     private int chartImageWidth;
     private static final int CHART_IMAGE_WIDTH_DEFAULT = 800;
-    private static final String IMAGE_WIDTH_PROPERTY_NAME = "antstatistics.chart.width";
+    private static final String CHART_IMAGE_WIDTH_PROPERTY_NAME = "antstatistics.chart.width";
 
     private int chartImageHeight;
     private static final int CHART_IMAGE_HEIGHT_DEFAULT = 600;
     private static final String CHART_IMAGE_HEIGHT_PROPERTY_NAME = "antstatistics.chart.height";
+
+    private boolean chartSVG;
+    private static final boolean CHART_SVG_DEFAULT = Boolean.TRUE;
+    private static final String CHART_SVG_PROPERTY_NAME = "antstatistics.chart.vector.graphics";
 
     private int targetThreshold;
     private static final int TARGET_THRESHOLD_DEFAULT = 200;
@@ -115,7 +130,11 @@ public class AntStatisticsLogger extends DefaultLogger {
 
         LinkedHashMap<Date, Map<String, Long>> data = createChartData(projects);
         JFreeChart chart = createChart(data);
-        saveChartImage(chart);
+        if (chartSVG) {
+            exportChartAsSVG(chart);
+        } else {
+            saveChartImage(chart);
+        }
 
         createStatisticsTable();
     }
@@ -123,15 +142,15 @@ public class AntStatisticsLogger extends DefaultLogger {
     private JFreeChart createChart(Map<Date, Map<String, Long>> data) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM. HH:mm");
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
         for (Map.Entry<Date, Map<String, Long>> column : data.entrySet()) {
             for (Map.Entry<String, Long> row : column.getValue().entrySet()) {
-                dataset.addValue(row.getValue(), row.getKey(), format.format(column.getKey()));
+                dataSet.addValue(row.getValue(), row.getKey(), format.format(column.getKey()));
             }
         }
 
         JFreeChart chart = ChartFactory.createStackedBarChart(CHART_TITLE, CHART_XAXIS_LABEL,
-                CHART_YAXIS_LABEL, dataset, PlotOrientation.VERTICAL, true, true, false);
+                CHART_YAXIS_LABEL, dataSet, PlotOrientation.VERTICAL, true, true, false);
         chart.setBackgroundPaint(Color.white);
 
         CategoryPlot plot = (CategoryPlot)chart.getPlot();
@@ -266,13 +285,11 @@ public class AntStatisticsLogger extends DefaultLogger {
     }
 
     private ProjectPerformance getProject(String projectName) {
-
         if (rootProject.getProjectName().equals(projectName)) {
             return rootProject;
         } else {
             return getProject(rootProject.getSubProjects(), projectName);
         }
-
     }
 
     private String getProperty(BuildEvent buildEvent, String propertyName, String propertyDefault) {
@@ -300,7 +317,16 @@ public class AntStatisticsLogger extends DefaultLogger {
 
             return propertyDefault;
         }
+    }
 
+    private boolean getPropertyAsBoolean(BuildEvent buildEvent, String propertyName, boolean propertyDefault) {
+        String propertyValue = buildEvent.getProject().getProperty(propertyName);
+
+        if (propertyValue == null || propertyValue.isEmpty()) {
+            return propertyDefault;
+        } else {
+            return Boolean.parseBoolean(propertyValue);
+        }
     }
 
     private TargetPerformance getTarget(BuildEvent buildEvent) {
@@ -386,8 +412,10 @@ public class AntStatisticsLogger extends DefaultLogger {
         dataDirectory = getProperty(buildEvent, DATA_DIRECTORY_PROPERTY_NAME, DATA_DIRECTORY_DEFAULT);
         chartImageHeight = getPropertyAsInteger(buildEvent, CHART_IMAGE_HEIGHT_PROPERTY_NAME,
                 CHART_IMAGE_HEIGHT_DEFAULT);
-        chartImageWidth = getPropertyAsInteger(buildEvent, IMAGE_WIDTH_PROPERTY_NAME,
+        chartImageWidth = getPropertyAsInteger(buildEvent, CHART_IMAGE_WIDTH_PROPERTY_NAME,
                 CHART_IMAGE_WIDTH_DEFAULT);
+        chartSVG = getPropertyAsBoolean(buildEvent, CHART_SVG_PROPERTY_NAME,
+                CHART_SVG_DEFAULT);
         historyExpire = getPropertyAsInteger(buildEvent, HISTORY_EXPIRE_PROPERTY_NAME,
                 HISTORY_EXPIRE_DEFAULT);
         targetThreshold = getPropertyAsInteger(buildEvent, TARGET_THRESHOLD_PROPERTY_NAME,
@@ -418,6 +446,38 @@ public class AntStatisticsLogger extends DefaultLogger {
             ChartUtils.saveChartAsPNG(imageFile, chart, chartImageWidth, chartImageHeight);
         } catch (Exception e) {
             log(String.format("could not save image '%s' (%s)", imageFile.toURI().toString(),
+                    e.getMessage()));
+        }
+    }
+
+    private void exportChartAsSVG(JFreeChart chart) {
+        File svgFile = new File(dataDirectory,
+                String.format("%s.svg", rootProject.getProjectName()));
+
+        // Get a DOMImplementation and create an XML document
+        DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null);
+
+        // Create an instance of the SVG Generator
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+
+        // draw the chart in the SVG generator
+        chart.draw(svgGenerator, new Rectangle(chartImageWidth, chartImageHeight));
+
+        Element root = svgGenerator.getRoot();
+        root.setAttributeNS(svgNS, "viewBox",
+                String.format("0 0 %d %d", chartImageWidth, chartImageHeight));
+
+        try {
+            // Write svg file
+            OutputStream outputStream = new FileOutputStream(svgFile);
+            Writer out = new OutputStreamWriter(outputStream, "UTF-8");
+            svgGenerator.stream(root, out, true /* use css */, false /* no escaping */);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            log(String.format("could not save image '%s' (%s)", svgFile.toURI().toString(),
                     e.getMessage()));
         }
     }
