@@ -1,20 +1,20 @@
 # AntStatistics #
 ## Description ##
-This ant logger logs execution times for all build targets and displays them at the end of the build. Furthermore executions times of past builds are collected and graphed in a chart.
+This Ant logger logs execution times for all build targets and displays them at the end of the build. Moreover, execution times of past builds are collected and graphed in a chart.
 
 ## Configuration ##
-AntStatistics can be configured via ant properties
+AntStatistics can be configured via Ant properties
 
 | **Property** | **Description** | **Default** |
 |:-------------|:----------------|:------------|
-| antstatistics.history.expire | Number of builds to keep in history | 5           |
-| antstatistics.chart.height | Chart image height | 800         |
-| antstatistics.chart.width | Chart image width | 600         |
-| antstatistics.target.threshold | Threshold for the chart, targets with execution times lower than this will not be included | 200         |
-| antstatistics.directory | Directory for AntStatistics to keep its data | antstatistics |
+| `antstatistics.history.expire` | Number of builds to keep in history | 5           |
+| `antstatistics.chart.height` | Chart image height | 800         |
+| `antstatistics.chart.width` | Chart image width | 600         |
+| `antstatistics.target.threshold` | Threshold for the chart, targets with execution times lower than this will not be included | 200         |
+| `antstatistics.directory` | Directory for AntStatistics to keep its data | _antstatistics_ |
 
 ## Usage ##
-**Variant 1** (assuming AntStatistics and its dependencies are available in the ant classpath)
+**Variant 1** (assuming AntStatistics and its dependencies are available in the Ant classpath)
 ```
 ant -logger de.pellepelster.ant.statistics.AntStatisticsLogger -f build.xml target
 ```
@@ -25,7 +25,7 @@ ant -lib ~/ant/antstatistics -logger de.pellepelster.ant.statistics.AntStatistic
 ```
 
 ## Example Chart ##
-![http://antstatistics.googlecode.com/files/build1.png](http://antstatistics.googlecode.com/files/build1.png)
+![img/build1.png](img/build1.png)
 
 ## Example Build Output ##
 ```

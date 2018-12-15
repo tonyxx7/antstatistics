@@ -20,7 +20,8 @@
 	</target>
 
 	<target name="init.ivy" depends="get.ivy">
-		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.dir}/${ivy.jar.name}"/>
+		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+			 classpath="${ivy.dir}/${ivy.jar.name}"/>
 		<ivy:settings file="${basedir}/ivy.settings.xml"/>
 	</target>
 
@@ -50,7 +51,7 @@
 	</target>
 
 	<target name="jar" depends="javac">
-		<jar destfile="${dist.location}/${ant.project.name}-${version}.jar" basedir="${build.location}" includes="**"/>
+		<jar destfile="${dist.location}/${ant.project.name}-${version}.jar" basedir="${build.location}"/>
 		<jar destfile="${dist.location}/${ant.project.name}-${version}-source.jar" basedir="${src.location}"/>
 	</target>
 
@@ -66,7 +67,6 @@
 		<zip basedir="${zip.temp}" destfile="${basedir}/${dist.location}/${ant.project.name}-${version}.zip"/>
 
 		<delete dir="${zip.temp}"/>
-		<echoproperties/>
 	</target>
 
 	<target name="build" depends="zip"/>
@@ -88,14 +88,14 @@
 			<pathconvert property="de.pellepelster.ant.statistics.launcher" pathsep=" -jar ">
 				<fileset dir="${basedir}/${lib.location}" includes="ant-launcher*.jar"/>
 			</pathconvert>
-					<exec executable="java" newenvironment="true">
-						<arg line="@{antOpts}"/>
-						<arg line="-jar ${de.pellepelster.ant.statistics.launcher}"/>
-						<arg line="-lib ${basedir}/${dist.location}/"/>
-						<arg line="-lib ${de.pellepelster.ant.statistics.libs}"/>
-						<arg line="-logger de.pellepelster.ant.statistics.AntStatisticsLogger"/>
-						<arg line="-f ${basedir}/${test.location}/build1.xml"/>
-					</exec>
+			<exec executable="java" newenvironment="true">
+				<arg line="@{antOpts}"/>
+				<arg line="-jar ${de.pellepelster.ant.statistics.launcher}"/>
+				<arg line="-lib ${basedir}/${dist.location}/"/>
+				<arg line="-lib ${de.pellepelster.ant.statistics.libs}"/>
+				<arg line="-logger de.pellepelster.ant.statistics.AntStatisticsLogger"/>
+				<arg line="-f ${basedir}/${test.location}/build1.xml"/>
+			</exec>
 		</sequential>
 	</macrodef>
 
