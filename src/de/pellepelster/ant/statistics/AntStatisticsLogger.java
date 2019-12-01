@@ -83,9 +83,8 @@ public class AntStatisticsLogger extends DefaultLogger {
             if (project1 == null || project2 == null || project1.getStartDate() == null
                     || project2.getStartDate() == null) {
                 return 0;
-            } else {
-                return project1.getStartDate().compareTo(project2.getStartDate());
             }
+            return project1.getStartDate().compareTo(project2.getStartDate());
         }
     };
 
@@ -97,9 +96,8 @@ public class AntStatisticsLogger extends DefaultLogger {
             if (target1 == null || target2 == null || target1.getDuration() == null
                     || target2.getDuration() == null) {
                 return 0;
-            } else {
-                return -1 * target1.getDuration().compareTo(target2.getDuration());
             }
+            return -1 * target1.getDuration().compareTo(target2.getDuration());
         }
     };
 
@@ -232,7 +230,6 @@ public class AntStatisticsLogger extends DefaultLogger {
             rootProject = new ProjectPerformance(projectName);
             rootProject.startTimer();
             currentProject = rootProject;
-
         } else {
             ProjectPerformance project = getProject(projectName);
 
@@ -263,8 +260,7 @@ public class AntStatisticsLogger extends DefaultLogger {
     }
 
     private ProjectPerformance getProject(BuildEvent buildEvent) {
-        String projectName = buildEvent.getProject().getName();
-        return getProject(projectName);
+        return getProject(buildEvent.getProject().getName());
     }
 
     private ProjectPerformance getProject(List<ProjectPerformance> projects, String projectName) {
@@ -284,9 +280,9 @@ public class AntStatisticsLogger extends DefaultLogger {
     private ProjectPerformance getProject(String projectName) {
         if (rootProject.getProjectName().equals(projectName)) {
             return rootProject;
-        } else {
-            return getProject(rootProject.getSubProjects(), projectName);
         }
+
+        return getProject(rootProject.getSubProjects(), projectName);
     }
 
     private String getProperty(BuildEvent buildEvent, String propertyName, String propertyDefault) {
@@ -294,26 +290,24 @@ public class AntStatisticsLogger extends DefaultLogger {
 
         if (propertyValue == null || propertyValue.isEmpty()) {
             return propertyDefault;
-        } else {
-            return propertyValue;
         }
+
+        return propertyValue;
     }
 
     private int getPropertyAsInteger(BuildEvent buildEvent, String propertyName, int propertyDefault) {
         String propertyValue = getProperty(buildEvent, propertyName, null);
 
-        if (propertyValue == null || propertyValue.isEmpty()) {
-            return propertyDefault;
-        } else {
+        if (propertyValue != null && !propertyValue.isEmpty()) {
             try {
                 return Integer.parseInt(propertyValue);
             } catch (NumberFormatException e) {
                 log(String.format("'%s' is not a valid integer for property '%s'", propertyValue,
                         propertyName));
             }
-
-            return propertyDefault;
         }
+
+        return propertyDefault;
     }
 
     private boolean getPropertyAsBoolean(BuildEvent buildEvent, String propertyName, boolean propertyDefault) {
@@ -321,9 +315,9 @@ public class AntStatisticsLogger extends DefaultLogger {
 
         if (propertyValue == null || propertyValue.isEmpty()) {
             return propertyDefault;
-        } else {
-            return Boolean.parseBoolean(propertyValue);
         }
+
+        return Boolean.parseBoolean(propertyValue);
     }
 
     private TargetPerformance getTarget(BuildEvent buildEvent) {
@@ -333,9 +327,9 @@ public class AntStatisticsLogger extends DefaultLogger {
         if (project == null) {
             log(String.format("project '%s' not found", (projectName == null) ? "" : projectName));
             return null;
-        } else {
-            return getTarget(project, buildEvent);
         }
+
+        return getTarget(project, buildEvent);
     }
 
     private TargetPerformance getTarget(ProjectPerformance project, BuildEvent buildEvent) {
@@ -372,6 +366,7 @@ public class AntStatisticsLogger extends DefaultLogger {
 
     private List<TargetPerformance> getTargets(ProjectPerformances projects, boolean applyFilter) {
         List<TargetPerformance> targets = new ArrayList<TargetPerformance>();
+
         for (ProjectPerformance project : projects.getProjects()) {
             getTargets(project, targets, applyFilter);
         }
@@ -428,11 +423,10 @@ public class AntStatisticsLogger extends DefaultLogger {
                 return (ProjectPerformances) getXStream().fromXML(reader);
             } catch (Exception e) {
                 log(String.format("could not read performance history (%s)", e.getMessage()));
-                return new ProjectPerformances();
             }
-        } else {
-            return new ProjectPerformances();
         }
+
+        return new ProjectPerformances();
     }
 
     private void saveChartImage(JFreeChart chart) {
