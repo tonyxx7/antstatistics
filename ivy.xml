@@ -9,7 +9,7 @@
   <dependencies defaultconfmapping="*->default">
     <dependency org="org.apache.ant" name="ant" rev="1.9.15"/>
     <dependency org="org.apache.ant" name="ant-launcher" rev="1.9.15"/>
-    <dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.12"/>
+    <dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.15"/>
     <dependency org="org.jfree" name="jfreechart" rev="1.5.0"/>
     <dependency org="org.apache.xmlgraphics" name="batik-svggen" rev="1.11"/>
     <dependency org="org.apache.xmlgraphics" name="batik-dom" rev="1.11"/>
