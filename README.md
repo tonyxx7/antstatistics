@@ -20,7 +20,7 @@ AntStatistics can be configured via Ant properties
 ant -logger de.pellepelster.ant.statistics.AntStatisticsLogger -f build.xml target
 ```
 
-**Variant 2** (assuming AntStatistics and its dependencies lie under _~/ant/antstatistics_
+**Variant 2** (assuming AntStatistics and its dependencies lie under _~/ant/antstatistics_)
 ```
 ant -lib ~/ant/antstatistics -logger de.pellepelster.ant.statistics.AntStatisticsLogger -f build.xml target
 ```
